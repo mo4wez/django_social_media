@@ -25,5 +25,7 @@ class RegisterView(View):
                 'You registered successfully.',
                 'success',
                 )
-            return redirect('home:home_page')            
+            return redirect('home:home_page')
+
+         
 

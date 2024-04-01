@@ -5,5 +5,5 @@ from . import views
 app_name = 'account'
 
 urlpatterns = [
-    path('register/', views.RegisterView.as_view(), name='user_register')
+    path('register/', views.RegisterView.as_view(), name='register_user')
 ]
