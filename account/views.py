@@ -59,6 +59,11 @@ class UserLoginView(View):
                     'success'
                     )
                 return redirect('home:home_page')
+            messages.success(
+                request,
+                'Username or password Wrong!',
+                'warning'
+                )
 
         return render(request, self.template_name, {'form': form})
 
