@@ -2,23 +2,27 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 
-from .forms import UserRegisterationForm
+from .forms import UserRegisterationForm, UserLoginForm
 
-class RegisterView(View):
+
+class UserRegisterView(View):
+    form_class = UserRegisterationForm
+
     def get(self, request):
-        form = UserRegisterationForm()
+        form = self.form_class()
         return render(request, 'account/register.html', {'form': form})
 
     def post(self, request):
-        form = UserRegisterationForm(request.POST)
+        form = self.form_class(request.POST)
         
         if form.is_valid():
             cd = form.cleaned_data
             User.objects.create_user(
                 username=cd['username'],
                 email=cd['email'],
-                password=cd['password'],
+                password=cd['password1'],
                 )
             messages.success(
                 request,
@@ -27,5 +31,49 @@ class RegisterView(View):
                 )
             return redirect('home:home_page')
 
-         
+        return render(request, 'account/register.html', {'form': form})
 
+class UserLoginView(View):
+    form_class = UserLoginForm
+    template_name = 'account/login.html'
+
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+
+        if form.is_valid():
+            cd = form.cleaned_data
+            user = authenticate(
+                request,
+                username=cd['username'],
+                password=cd['password'],
+                )
+            if user is not None:
+                login(request, user)
+                messages.success(
+                    request,
+                    'Login successfull.',
+                    'success'
+                    )
+                return redirect('home:home_page')
+
+        return render(request, self.template_name, {'form': form})
+
+
+class UserLogOutView(View):
+    
+    def get(self, request):
+        return render(request, 'account/logout.html')
+    
+    def post(self, request):
+        logout(request)
+        messages.error(
+            request,
+            'You\'re logged out.',
+            'danger',
+            )
+
+        return redirect('account:login_user')
