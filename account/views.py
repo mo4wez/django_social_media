@@ -10,6 +10,11 @@ from .forms import UserRegisterationForm, UserLoginForm
 class UserRegisterView(View):
     form_class = UserRegisterationForm
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('home:home_page')
+        return super().dispatch(request, *args, **kwargs)
+
     def get(self, request):
         form = self.form_class()
         return render(request, 'account/register.html', {'form': form})
