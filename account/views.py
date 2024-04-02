@@ -80,7 +80,6 @@ class UserLoginView(View):
 
 
 class UserLogOutView(LoginRequiredMixin, View):
-    login_url = '/account/login/'
 
     def get(self, request):
         return render(request, 'account/logout.html')
