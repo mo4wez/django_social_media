@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect
 from django.views import View
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import UserRegisterationForm, UserLoginForm
 
@@ -78,13 +79,9 @@ class UserLoginView(View):
         return render(request, self.template_name, {'form': form})
 
 
-class UserLogOutView(View):
+class UserLogOutView(LoginRequiredMixin, View):
+    login_url = '/account/login/'
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_anonymous:
-            return redirect('home:home_page')
-        return super().dispatch(request, *args, **kwargs)
-    
     def get(self, request):
         return render(request, 'account/logout.html')
     
