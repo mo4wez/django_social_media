@@ -79,6 +79,11 @@ class UserLoginView(View):
 
 
 class UserLogOutView(View):
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_anonymous:
+            return redirect('home:home_page')
+        return super().dispatch(request, *args, **kwargs)
     
     def get(self, request):
         return render(request, 'account/logout.html')
