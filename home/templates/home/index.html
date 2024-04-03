@@ -4,9 +4,16 @@
 
 {% block content %}
     Home Index
-    <div class="card">
+    <div class="card" style="width: 18rem;">
+        <div class="card-header">
+          Posts
+        </div>
         {% for post in posts %}
-            <a class="card-body" href="#">{{post.body|truncatewords:8}}</a>
-        {% endfor %}
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <a href="{{post.get_absolute_url}}">{{post.title|truncatewords:8}}</a>
+            </li>
+        </ul>
+          {% endfor %}
     </div>
 {% endblock content %}
