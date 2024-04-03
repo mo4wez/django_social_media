@@ -1,7 +1,10 @@
 from django.shortcuts import render
 from django.views import View
 
-class HomePageView(View):
-    def get(self, request):
-        return render(request, 'home/index.html')
+from .models import Post
 
+class HomePageView(View):
+
+    def get(self, request):
+        posts = Post.objects.all()
+        return render(request, 'home/index.html', {'posts': posts})

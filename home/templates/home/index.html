@@ -4,4 +4,9 @@
 
 {% block content %}
     Home Index
+    <div class="card">
+        {% for post in posts %}
+            <a class="card-body" href="#">{{post.body|truncatewords:8}}</a>
+        {% endfor %}
+    </div>
 {% endblock content %}
