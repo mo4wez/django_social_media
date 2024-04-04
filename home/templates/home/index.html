@@ -12,6 +12,7 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
                 <a href="{{post.get_absolute_url}}">{{post.title|truncatewords:8}}</a>
+                <p>updated at {{post.datetime_modified|date:"Y-M"}}</p>
             </li>
         </ul>
           {% endfor %}

@@ -4,4 +4,19 @@
 
 {% block content %}
     <h2 class="text-center">{{user_p.username}}</h2>
+    <div class="card" style="width: 18rem;">
+        <div class="card-header">
+          Your Posts
+        </div>
+        {% for post in posts %}
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <a href="{{post.get_absolute_url}}">{{post.title|truncatewords:8}}</a>
+                    <p>created at {{post.datetime_created|date:"Y-M"}}</p>
+                </li>
+            </ul>
+        {% empty %}
+            <p>No post</p>
+        {% endfor %}
+    </div>
 {% endblock content %}
