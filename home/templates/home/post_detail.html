@@ -15,9 +15,11 @@
         <a href="{% url 'account:user_profile' post.user.id %}">{{post.user.username}}</a>
       </li>
     </ul>
-    <div class="card-body">
-      <a href="#" class="card-link">Edit</a>
-      <a href="#" class="card-link">Delete</a>
-    </div>
+    {% if post.user == user %}
+      <div class="card-body">
+        <a href="#" class="card-link">Edit</a>
+        <a href="#" class="card-link">Delete</a>
+      </div>
+    {% endif %}
 </div>
 {% endblock content %}
