@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.text import slugify
 
 from .models import Post
-from .forms import PostUpdateForm
+from .forms import PostCreateAndUpdateForm
 
 class HomePageView(View):
 
@@ -37,7 +37,7 @@ class PostDeleteView(LoginRequiredMixin, View):
                 request, 
                 'Your was post deleted.',
                 'success'
-            )
+                )
             return redirect('home:home_page')
         
         messages.error(
@@ -50,7 +50,7 @@ class PostDeleteView(LoginRequiredMixin, View):
 
 
 class PostUpdateView(LoginRequiredMixin, View):
-    form_class = PostUpdateForm
+    form_class = PostCreateAndUpdateForm
     template_name = 'home/post_update.html'
 
     def setup(self, request, *args, **kwargs):
@@ -64,7 +64,7 @@ class PostUpdateView(LoginRequiredMixin, View):
                 request,
                 'You can not edit this post!',
                 'danger'
-            )
+                )
             return redirect('home:home_page')
         return super().dispatch(request, *args, **kwargs)
 
@@ -86,10 +86,31 @@ class PostUpdateView(LoginRequiredMixin, View):
                 request,
                 f'\"{post.title}\" updated successfully.',
                 'success'
-            )
+                )
             return redirect('home:post_detail', post.id, post.slug)
         return render(request, self.template_name, {'form':form})
 
 
 class PostCreateView(LoginRequiredMixin, View):
-    pass
+    form_class = PostCreateAndUpdateForm
+    template_name = 'home/post_update.html'
+    
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+
+        return render(request, self.template_name, {'form':form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+
+        if form.is_valid():
+            new_post = form.save(commit=False)
+            new_post.slug = slugify(form.cleaned_data['title'][:30])
+            new_post.user = request.user
+            new_post.save()
+            messages.success(
+                request,
+                'Your post created successfully.',
+                'success'
+                )
+            return redirect('home:post_detail', new_post.id, new_post.slug)
