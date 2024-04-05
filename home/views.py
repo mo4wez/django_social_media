@@ -89,3 +89,7 @@ class PostUpdateView(LoginRequiredMixin, View):
             )
             return redirect('home:post_detail', post.id, post.slug)
         return render(request, self.template_name, {'form':form})
+
+
+class PostCreateView(LoginRequiredMixin, View):
+    pass
