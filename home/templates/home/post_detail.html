@@ -17,7 +17,7 @@
     </ul>
     {% if post.user == user %}
       <div class="card-body">
-        <a href="#" class="card-link">Edit</a>
+        <a href="{% url "home:post_update" post.id %}" class="card-link">Edit</a>
         <a href="{% url "home:post_delete" post.id %}" class="card-link">Delete</a>
       </div>
     {% endif %}

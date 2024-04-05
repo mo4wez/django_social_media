@@ -1,9 +1,13 @@
+from typing import Any
+from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.text import slugify
 
 from .models import Post
+from .forms import PostUpdateForm
 
 class HomePageView(View):
 
@@ -43,4 +47,45 @@ class PostDeleteView(LoginRequiredMixin, View):
         )
         
         return render(request, 'home/post_delete.html')
-        
+
+
+class PostUpdateView(LoginRequiredMixin, View):
+    form_class = PostUpdateForm
+    template_name = 'home/post_update.html'
+
+    def setup(self, request, *args, **kwargs):
+        self.post_instance = Post.objects.get(pk=kwargs['post_id'])
+        return super().setup(request, *args, **kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        post = self.post_instance
+        if not post.user.id == request.user.id:
+            messages.error(
+                request,
+                'You can not edit this post!',
+                'danger'
+            )
+            return redirect('home:home_page')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        post = self.post_instance
+        form = self.form_class(instance=post)
+
+        return render(request, self.template_name, {'form':form})
+
+    def post(self, request, *args, **kwargs):
+        post = self.post_instance
+        form = self.form_class(request.POST, instance=post)
+
+        if form.is_valid():
+            new_post = form.save(commit=False)
+            new_post.slug = slugify(form.cleaned_data['title'][:30])
+            new_post.save()
+            messages.success(
+                request,
+                f'\"{post.title}\" updated successfully.',
+                'success'
+            )
+            return redirect('home:post_detail', post.id, post.slug)
+        return render(request, self.template_name, {'form':form})
