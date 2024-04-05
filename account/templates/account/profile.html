@@ -18,5 +18,10 @@
         {% empty %}
             <p>No post</p>
         {% endfor %}
+        {% if request.user.id == user_p.id %}
+            <div class="card-header">
+                <a href="{% url "home:post_create" %}">Add a post</a>
+            </div>
+        {% endif %}
     </div>
 {% endblock content %}
