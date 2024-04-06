@@ -29,10 +29,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = env('DJANGO_DEBUG')
-DEBUG = False
+DEBUG = env('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -139,3 +138,12 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 LOGIN_URL = '/account/login/'
+
+# google account
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmainBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_PORT = 587
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'mo4wez dev'
