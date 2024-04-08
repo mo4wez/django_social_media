@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
 
+from .models import Relation
 from .forms import UserRegisterationForm, UserLoginForm
 
 
@@ -40,6 +41,7 @@ class UserRegisterView(View):
             return redirect('home:home_page')
 
         return render(request, 'account/register.html', {'form': form})
+
 
 class UserLoginView(View):
     form_class = UserLoginForm
@@ -122,3 +124,30 @@ class UserPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
 
 class UserPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
     template_name = 'account/password_reset_complete.html'
+
+
+class UserFollowView(LoginRequiredMixin, View):
+    
+    def get(self, request, user_id):
+        user = User.objects.get(pk=user_id)
+        relation = Relation.objects.filter(from_user=request.user, to_user=user)
+
+        if relation.exists():
+            messages.error(
+                request,
+                'You are already following this user.',
+                'dager'
+                )
+        else:
+            Relation(from_user=request.user, to_user=user).save()
+            messages.success(
+                request,
+                'You followed this user.',
+                'success'
+                )
+        return redirect('account:user_profile', user.id)
+
+class UserUnfollowView(LoginRequiredMixin, View):
+
+    def get(self, request, user_id):
+        pass
