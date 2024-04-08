@@ -6,9 +6,12 @@ class Post(models.Model):
     title = models.CharField(max_length=120)
     body = models.TextField()
     slug = models.SlugField()
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='user_posts')
     datetime_created = models.DateTimeField(auto_now_add=True)
     datetime_modified = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('-datetime_created',)
 
     def __str__(self):
         return self.title
