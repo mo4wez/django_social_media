@@ -7,7 +7,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
 
-from home.models import Post
 from .forms import UserRegisterationForm, UserLoginForm
 
 
@@ -102,7 +101,7 @@ class UserProfileView(LoginRequiredMixin, View):
     
     def get(self, request, user_id):
         user = get_object_or_404(User, pk=user_id)
-        posts = Post.objects.filter(user=user)
+        posts = user.user_posts.all()
         return render(request, 'account/profile.html', {'user_p': user, 'posts': posts})
 
 
