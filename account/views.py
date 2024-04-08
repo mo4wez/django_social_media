@@ -32,12 +32,12 @@ class UserRegisterView(View):
                 username=cd['username'],
                 email=cd['email'],
                 password=cd['password1'],
-                )
+            )
             messages.success(
                 request,
                 'You registered successfully.',
                 'success',
-                )
+            )
             return redirect('home:home_page')
 
         return render(request, 'account/register.html', {'form': form})
@@ -65,20 +65,20 @@ class UserLoginView(View):
                 request,
                 username=cd['username'],
                 password=cd['password'],
-                )
+            )
             if user is not None:
                 login(request, user)
                 messages.success(
                     request,
                     'Login successfull.',
                     'success'
-                    )
+                )
                 return redirect('home:home_page')
             messages.success(
                 request,
                 'Username or password Wrong!',
                 'warning'
-                )
+            )
 
         return render(request, self.template_name, {'form': form})
 
@@ -94,7 +94,7 @@ class UserLogOutView(LoginRequiredMixin, View):
             request,
             'You\'re logged out.',
             'danger',
-            )
+        )
 
         return redirect('account:login_user')
 
@@ -137,17 +137,33 @@ class UserFollowView(LoginRequiredMixin, View):
                 request,
                 'You are already following this user.',
                 'dager'
-                )
+            )
         else:
             Relation(from_user=request.user, to_user=user).save()
             messages.success(
                 request,
                 'You followed this user.',
                 'success'
-                )
+            )
         return redirect('account:user_profile', user.id)
 
 class UserUnfollowView(LoginRequiredMixin, View):
 
     def get(self, request, user_id):
-        pass
+        user = User.objects.get(pk=user_id)
+        relation = Relation.objects.filter(from_user=request.user, to_user=user)
+
+        if relation.exists():
+            relation.delete()
+            messages.success(
+                request,
+                'You Unfollowed this user.',
+                'success',
+            )
+        else:
+            messages.error(
+                request,
+                'you are not following this user.',
+                'danger'
+            )
+        return redirect('account:user_profile', user.id)
