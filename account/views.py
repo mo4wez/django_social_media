@@ -102,9 +102,13 @@ class UserLogOutView(LoginRequiredMixin, View):
 class UserProfileView(LoginRequiredMixin, View):
     
     def get(self, request, user_id):
+        is_following = False
         user = get_object_or_404(User, pk=user_id)
         posts = user.user_posts.all()
-        return render(request, 'account/profile.html', {'user_p': user, 'posts': posts})
+        relation = Relation.objects.filter(from_user=request.user, to_user=user)
+        if relation.exists():
+            is_following = True
+        return render(request, 'account/profile.html', {'user_p': user, 'posts': posts, 'is_following':is_following})
 
 
 class UserPasswordResetView(auth_views.PasswordResetView):
